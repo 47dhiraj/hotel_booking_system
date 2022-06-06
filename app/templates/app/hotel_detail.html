@@ -1,0 +1,131 @@
+{% extends 'app/base.html '%}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+{% block start %}
+<style>
+
+</style>
+
+
+<div class="container mb-3" style="min-height: 56vh;">
+
+    <div class="row search-card-result" style="box-shadow: 0px 0px 0px;">
+
+        <div class="col-md-6">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <a href="{% url 'detail' hotel.uid %}">
+                        <img style='height: 100%; width: 100%; object-fit: contain'
+                            src="{{ hotel.hotel_images.last.images.url }}" alt="{{ hotel.hotel_images.last.images }}">
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <h5>{{ hotel.hotel_name }}</h5>
+
+                    <p class="pt-2">{{ hotel.description }}</p>
+
+                    {% for amenity in hotel.amenities.all %}
+                    <b>{{amenity.amenity_name}},</b>
+                    {% endfor %}
+
+                    <p class="pt-3"> Review: <b>Excellent</b></p>
+                </div>
+
+            </div>
+
+            <div class="row mt-3 mb-3">
+                {% for hotel_image in hotel.hotel_images.all %}
+                <div class="col-md-4 p-1">
+                    <img src="{{ hotel_image.images.url }}" alt="{{ hotel_image.images }}"
+                        style='height: 100%; width: 100%; object-fit: contain'>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-6">
+
+            <div class="row">
+
+                <div class="col-md-5 border-left text-end more-offers">
+                    <p class="additional">Details</p>
+
+                    <p>Contact : {{ hotel.phone }}</p>
+
+                    <div class="text-success additional pt-4">
+                        <h5>Booking Price ${{ hotel.booking_price }}</h5>
+                    </div>
+
+                </div>
+
+                {% if request.user.is_authenticated %}
+                <div class="col-md-7 mt-3 mb-3">
+
+                    <div class="filter-card">
+
+                        <h5 style="text-align: center; color: orange;" class="p-2">Perform Booking</h5>
+
+                        {% if messages%}
+                        {% for message in messages%}
+                        <div class="alert {{ message.tags }} alert-dismissible fade show p-0 mb-1rem" role="alert">
+                            {{message}}
+                            <button type="button" class="btn-close p-0" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                        {%endfor%}
+                        {% endif %}
+
+                        <form method="POST" style="background: linear-gradient(to bottom,#febb02 0,#febb02 100%);">
+                            {% csrf_token %}
+
+                            <div class="row form-group">
+
+                                <div class="col-md-12">
+                                    <label for="mintopay"> <b> Check In </b> </label>
+                                    <p>
+                                        <input type="date" name="checkin" id="checkin" class="form-control">
+                                    </p>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="maxtopay"> <b> Check Out </b> </label>
+                                    <p>
+                                        <input type="date" name="checkout" id="checkout" class="form-control">
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row form-group">
+                                <div class="col-md-12 mt-5 text-center">
+                                    <input type="submit" class="btn btn-success btn-block w-50 p-2" value="Book Hotel">
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+{% endblock %}

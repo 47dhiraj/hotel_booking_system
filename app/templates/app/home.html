@@ -1,0 +1,218 @@
+{% extends 'app/base.html '%}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+{% block start %}
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css"
+    integrity="sha512-mR/b5Y7FRsKqrYZou7uysnOdCIJib/7r5QeJMFvLNHNhtye3xJp1TdJVPLtetkukFn227nKpXD9OjUc09lx97Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<section class="search-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+
+                <div class="row mt-5">
+                </div>
+
+                <div class="row mt-2 justify-content-between">
+                    <div class="filter-card" style="background: linear-gradient(to bottom,#febb02 0,#febb02 100%);">
+                        <h3 style="font-weight: 600; text-align: center;">Filter Available Hotels</h3>
+
+                        <form action="#" >
+
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    <label style="color: white; font-size: large;"><b>  Check in </b> </label>
+                                    <p>
+                                        <input type="date" name="checkin" id="checkin" class="form-control">
+                                    </p>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label style="color: white; font-size: large;"><b> Check out </b> </label>
+                                    <p>
+                                        <input type="date" name="checkout" id="checkout" class="form-control">
+                                    </p>
+                                </div>
+
+                            </div>
+                      
+                            <div class="row form-group text-center mt-4">
+                                <div class="col-md-12">
+                                    <input type="submit" class="btn btn-primary btn-block w-50" value="Filter Hotels" disabled>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-9  px-4">
+
+                <form action="#" method="GET">
+
+                    <div class="row mt-3">
+
+                        <div class="col-md-3">
+                            <div class="form-inline">
+                                <label class="m-2"><b> Sort by Price </b></label>
+
+                                <select class="form-control" id="sort_by" name="sort_by">
+                                    <option value="" selected disabled>Sort by booking Price</option>
+
+                                    <option value="ASC" {% if sort_by == "ASC" %} selected {% endif %}>Ascending Order
+                                    </option>
+                                    <option value="DSC" {% if sort_by == "DSC" %} selected {% endif %}>Descending Order
+                                    </option>
+                                </select>   
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-inline">
+                                <label class="m-2"><b> Amenities </b></label>
+
+                                <select class="form-select" id="amenities" name="amenities" multiple>
+                                    <option value="" selected disabled>Choose Amenities</option>
+
+                                    {% for amenity in amenities %}
+                                    <option {% if amenity.amenity_name in sort_amenities %} selected {% endif %}
+                                        value="{{amenity.amenity_name}}">{{amenity.amenity_name}}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-inline">
+                                <label class="m-2"><b>Search</b></label>
+                                <input class="form-control" {% if search %} value="{{search}}" {% endif %}
+                                    placeholder="Text to search .... " type="text" name="search" id="search">
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary pt-2 pb-2 w-75" style="margin-top: 43px;">Sort
+                                & Search</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+
+
+                {% for hotel in hotels %}
+
+                <div class="row search-card-result">
+
+                    <div class="col-md-3">
+                        <a href="{% url 'detail' hotel.uid %}">
+                            <img class="img-fluid" src="{{ hotel.hotel_images.first.images.url }}"
+                                alt="{{ hotel.hotel_images.first.images }}">
+                        </a>
+                    </div>
+
+                    <div class="col-md-5">
+                        <h5>{{ hotel.hotel_name }}</h5>
+
+                        <p>{{ hotel.description|truncatechars:40 }}</p>
+
+                        {% for amenity in hotel.amenities.all %}
+                        <b>{{amenity.amenity_name}},</b>
+                        {% endfor %}
+
+                        <p> Review: <b>Excellent</b></p>
+                    </div>
+
+
+                    <div class="col-md-2 border-left text-center more-offers">
+                        <p class="additional">Details</p>
+                        <p>Total rooms : {{ hotel.room_count }}</p>
+
+                        <p>Contact : {{ hotel.phone }}</p>
+
+                        <p class="border-top additional">Booking Price ${{ hotel.booking_price }}</p>
+
+                    </div>
+
+                    <div class="col-md-2 border-left text-center more-offers">
+
+                        <!-- <div class="text-warning">
+                                <p>website.com</p>
+                                <p>
+                                    <s>$5000.00</s>
+                                </p>
+                            </div> -->
+
+                        <div class="text-success">
+                            <p>website.com</p>
+                            <h5>${{ hotel.booking_price }}</h5>
+                        </div>
+
+                        
+                        <a href="{% url 'detail' hotel.uid %}" class="btn btn-primary">View Detail</a>
+                        
+                    </div>
+                </div>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination d-flex justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+<!-- {% block content %}
+{% endblock %} -->
